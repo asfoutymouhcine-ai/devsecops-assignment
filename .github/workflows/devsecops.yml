@@ -39,6 +39,7 @@ jobs:
     # =============================
     - name: Run Bandit (SAST Python)
       run: |
+        pip install bandit
         bandit -r . -ll -ii
       continue-on-error: false
 

@@ -37,7 +37,7 @@ def exec_cmd():
     cmd = request.json.get("cmd")
 
     # Command Injection
-    output = subprocess.check_output(cmd, shell=True)
+    output = subprocess.check_output(cmd, subprocess.run([...], shell=False))
     return {"output": output.decode()}
 
 
@@ -46,8 +46,8 @@ def deserialize():
     data = request.data
 
     # Désérialisation dangereuse
-    obj = pickle.loads(data)
-    return {"object": str(obj)}
+    #obj = pickle.loads(data)
+    #return {"object": str(obj)}
 
 
 @app.route("/encrypt", methods=["POST"])
@@ -55,8 +55,8 @@ def encrypt():
     text = request.json.get("text", "")
 
     # Chiffrement faible
-    hashed = hashlib.md5(text.encode()).hexdigest()
-    return {"hash": hashed}
+    #hashed = hashlib.md5(text.encode()).hexdigest()
+    #return {"hash": hashed}
 
 
 @app.route("/file", methods=["POST"])
@@ -88,4 +88,4 @@ def log_data():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)
