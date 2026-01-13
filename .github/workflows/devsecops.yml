@@ -16,13 +16,13 @@ jobs:
 
     steps:
     # =============================
-    # 1️ Checkout du code
+    # 1️⃣ Checkout du code
     # =============================
     - name: Checkout code
       uses: actions/checkout@v4
 
     # =============================
-    # 2️ Setup Python
+    # 2️⃣ Setup Python
     # =============================
     - name: Setup Python
       uses: actions/setup-python@v5
@@ -35,39 +35,40 @@ jobs:
         pip install bandit safety semgrep
 
     # =============================
-    # 3️ SAST – Bandit (Python)
+    # 3️⃣ SAST – Bandit
     # =============================
     - name: Run Bandit (SAST Python)
-      run: |
-        pip install bandit
-        bandit -r . -ll -ii
-      continue-on-error: false
+      run: bandit -r . -ll -ii
 
     # =============================
-    # 4️ SAST – Semgrep
+    # 4️⃣ SAST – Semgrep
     # =============================
     - name: Run Semgrep (SAST)
-      run: |
-        semgrep --config=auto .
-      continue-on-error: false
+      run: semgrep --config=auto .
 
     # =============================
-    # 5️ Scan dépendances Python
+    # 5️⃣ Scan dépendances Python
     # =============================
     - name: Dependency Scan (Safety)
-      run: |
-        safety check
-      continue-on-error: false
+      run: safety check
 
     # =============================
-    # 6️ Build image Docker
+    # 6️⃣ Build image Docker
     # =============================
     - name: Build Docker image
-      run: |
-        docker build -t devsecops-api .
+      run: docker build -t devsecops-api .
 
     # =============================
-    # 7️ Scan image Docker – Trivy
+    # 7️⃣ Cache Trivy DB
+    # =============================
+    - name: Cache Trivy DB
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/trivy
+        key: trivy-db-${{ runner.os }}
+
+    # =============================
+    # 8️⃣ Scan image Docker – Trivy
     # =============================
     - name: Scan Docker image with Trivy
       uses: aquasecurity/trivy-action@0.33.1
@@ -77,9 +78,11 @@ jobs:
         severity: CRITICAL,HIGH
         exit-code: 1
         ignore-unfixed: false
+        timeout: 10m
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     # =============================
-    # 8️ Résumé sécurité
+    # 9️⃣ Résumé sécurité
     # =============================
     - name: Security summary
-      run: echo "Pipeline DevSecOps terminée avec succès "
+      run: echo "Pipeline DevSecOps terminé avec succès ✅"
