@@ -79,7 +79,10 @@ jobs:
         exit-code: 1
         ignore-unfixed: false
         timeout: 10m
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        cache-dir: ~/.cache/trivy
+        github-pat: ${{ secrets.GITHUB_TOKEN }}
+
+
 
     # =============================
     # 9️⃣ Résumé sécurité
